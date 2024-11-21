@@ -1,0 +1,3 @@
+[submodule "k230"]
+	path = k230
+	url = git@github.com:revyos/mkimg-k230.git
