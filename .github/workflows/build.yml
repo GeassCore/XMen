@@ -1,4 +1,4 @@
-name: mkimg-k230-ci
+name: xiaoman-k230-ci
 
 on:
   push:
@@ -28,17 +28,8 @@ jobs:
   mkrootfs:
     strategy:
       fail-fast: false
-      matrix:
-        model: [canmv, evb]
-        distro: [revyos, debian]
-        abi: [rv64]
-
+      
     runs-on: ubuntu-22.04
-    env:
-      BOARD: ${{ matrix.model }}
-      DISTRO: ${{ matrix.distro }}
-      ABI: ${{ matrix.abi }}
-
     steps:
       - name: Create Timestamp
         run: |
