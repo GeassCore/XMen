@@ -70,17 +70,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: revyos/mkimg-k230
-          path: k230
+          path: mkimg-k230
           ref: 2024.10.08
           
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
+      # - name: Checkout Repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     submodules: true
           
       - name: Build mkimg-k230
         run: |
-            pushd k230
+            pushd mkimg-k230
                 #make revyos-release on CI
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
                 echo "BUILD_DATE=${{ env.BUILD_DATE }}" >> revyos-release
