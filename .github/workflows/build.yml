@@ -42,5 +42,11 @@ jobs:
                                   qemu-user-static binfmt-support mmdebstrap zstd libconfuse-dev mtools debian-keyring debian-archive-keyring
               ${wget_alias} https://mirror.iscas.ac.cn/revyos/revyos-addons/pool/main/r/revyos-keyring/revyos-keyring_2023.06.12_all.deb
               sudo apt install ./revyos-keyring_2023.06.12_all.deb
-                                  
+              
+              ${wget_alias} ${xuantie_toolchain}/${toolchain_file_name}
+              tar -xvf ${toolchain_file_name} -C /opt
+              rm -rf ${toolchain_file_name}
+              export PATH="/opt/riscv/bin:$PATH"
+              echo "PATH=${PATH}" >> $GITHUB_ENV
+              $(CROSS_COMPILE_)-gcc -v                    
               
