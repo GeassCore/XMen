@@ -35,7 +35,7 @@ jobs:
         run: |
               echo "BUILD_ID=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
               echo "BUILD_DATE=$(date +%Y%m%d)" >> $GITHUB_ENV
-      - name: deps
+      - name: Install Software
         run: |
               sudo apt install -y gdisk dosfstools build-essential autoconf automake autotools-dev ninja-build make \
                                   libncurses-dev gawk flex bison openssl libssl-dev tree \
@@ -48,5 +48,53 @@ jobs:
               rm -rf ${mainline_toolchain_file_name}
               export PATH="/opt/riscv/bin:$PATH"
               echo "PATH=${PATH}" >> $GITHUB_ENV
-              $(CROSS_COMPILE_)-gcc -v                    
-              
+              $(CROSS_COMPILE)-gcc -v                    
+      
+      - name: Checkout genimage
+        uses: actions/checkout@v4
+        with:
+          repository: pengutronix/genimage
+          path: genimage
+          ref: v17
+
+      - name: Build genimage
+        run: |
+            pushd genimage
+              ./autogen.sh
+              ./configure
+              make -j$(nproc)
+              sudo make install
+            popd
+            
+      - name: Checkout mkimg-k230
+        uses: actions/checkout@v4
+        with:
+          repository: revyos/mkimg-k230
+          path: k230
+          ref: 2024.10.08
+          
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          
+      - name: Build mkimg-k230
+        run: |
+            pushd k230
+                #make revyos-release on CI
+                echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
+                echo "BUILD_DATE=${{ env.BUILD_DATE }}" >> revyos-release
+                echo "RELEASE_ID=${{ github.ref_name }}" >> revyos-release
+                echo "COMMIT_ID=${{ github.sha }}" >> revyos-release
+                echo "RUNNER_ID=${{ github.run_id }}" >> revyos-release
+
+                git submodule init
+                git submodule update
+
+                # workaround for
+                sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
+  
+                sudo -E --preserve-env=PATH bash ./build.sh build all
+                # fix permissions
+                sudo chown -R $USER:$USER output
+            popd
