@@ -28,7 +28,7 @@ jobs:
   mkrootfs:
     strategy:
       fail-fast: false
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
       continue-on-error:yes
     
     steps:
