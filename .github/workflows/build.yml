@@ -28,8 +28,9 @@ jobs:
   mkrootfs:
     strategy:
       fail-fast: false
-      
     runs-on: ubuntu-22.04
+      continue-on-error:yes
+    
     steps:
       - name: Create Timestamp
         run: |
