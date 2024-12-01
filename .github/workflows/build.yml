@@ -48,7 +48,7 @@ jobs:
               rm -rf ${mainline_toolchain_file_name}
               export PATH="/opt/riscv/bin:$PATH"
               echo "PATH=${PATH}" >> $GITHUB_ENV
-              $(CROSS_COMPILE)-gcc -v                    
+              $(CROSS_COMPILE)gcc -v                    
       
       - name: Checkout genimage
         uses: actions/checkout@v4
