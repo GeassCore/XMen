@@ -22,12 +22,15 @@ env:
   KDEB_COMPRESS: xz
   KDEB_CHANGELOG_DIST: unstable
   OUTPUT: output
-
+  continue: true
+  time: 3
 
 jobs:
   mkrootfs:
     runs-on: ubuntu-latest
+    
     steps:
+      - continue-on-error: ${{ fromJSON(env.continue) }}
       - name: Create Timestamp
         run: |
               echo "BUILD_ID=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
