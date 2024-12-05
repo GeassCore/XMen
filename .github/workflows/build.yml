@@ -109,8 +109,8 @@ jobs:
                 # fix permissions
                 sudo chown -R $USER:$USER output
             popd
-      
-       - name: Make Checksum file & Compress files
+            
+      - name: Make Checksum file & Compress files
         run: |
             pushd ${OUTPUT}
               mv sysimage-sdcard*.img k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
