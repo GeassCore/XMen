@@ -85,7 +85,9 @@ jobs:
       #     submodules: true
           
       - name: Build mkimg-k230
-        run: |
+        run: 
+            mkdir -p mkimg-k230/${OUTPUT}
+            cp bins/* mkimg-k230/${OUTPUT}/
             pushd mkimg-k230
                 #make revyos-release on CI
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
@@ -100,7 +102,7 @@ jobs:
                 # workaround for
                 sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
                 # do not build linux
-                sed '204d' ./build.sh > ./build.sh
+                sed '197d' ./build.sh > ./build.sh
 
                 sudo -E --preserve-env=PATH bash ./build.sh build all
                 #sudo -E --preserve-env=PATH bash ./build.sh build check_euid_root
