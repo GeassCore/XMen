@@ -5,7 +5,7 @@ on:
     tags:
       - '*'
     branches:
-      - '*'
+      - 'rv64ilp32-dev'
   pull_request:
   workflow_dispatch:
 
@@ -79,16 +79,15 @@ jobs:
           path: mkimg-k230
           ref: 2024.10.08
           
-      - name: list file
-        run: |
-            pwd
-            ls
-            ls mkimg-k230
-            mkdir -p mkimg-k230/${OUTPUT}
-            cp /home/runner/work/XMen/XMen/bins/* mkimg-k230/${OUTPUT}/
-            
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          path: Xmen
+          
       - name: Build mkimg-k230
         run: |
+            mkdir -p mkimg-k230/${OUTPUT}
+            cp Xmen/bins/* mkimg-k230/${OUTPUT}/
             pushd mkimg-k230
                 #make revyos-release on CI
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
