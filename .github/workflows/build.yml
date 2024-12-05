@@ -82,8 +82,7 @@ jobs:
       - name: list file
         run: |
             pwd
-            ls
-            mkimg-k230
+            ls mkimg-k230
             mkdir -p mkimg-k230/${OUTPUT}
             cp bins/* mkimg-k230/${OUTPUT}/
             
