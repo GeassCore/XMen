@@ -109,8 +109,8 @@ jobs:
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_opensbi
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_uboot
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_rootfs
-                cp ../bins/* ${OUTPUT}/
-                sudo -E --preserve-env=PATH bash ./build.sh build build_img
+                #cp ../bins/* ${OUTPUT}/
+                #sudo -E --preserve-env=PATH bash ./build.sh build build_img
                 # fix permissions
                 sudo chown -R $USER:$USER output
             popd
