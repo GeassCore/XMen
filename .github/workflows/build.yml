@@ -23,7 +23,7 @@ env:
   KDEB_CHANGELOG_DIST: unstable
   OUTPUT: output
   continue: true
-  time: 3
+  time: 300
 
 jobs:
   mkrootfs:
@@ -31,6 +31,9 @@ jobs:
     
     steps:
       - continue-on-error: ${{ fromJSON(env.continue) }}
+        timeout-minutes: ${{ fromJSON(env.time) }}
+        run: echo ...
+        
       - name: Create Timestamp
         run: |
               echo "BUILD_ID=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
