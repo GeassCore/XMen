@@ -30,7 +30,6 @@ jobs:
       fail-fast: false
     
     runs-on: ubuntu-latest
-      continue-on-error:yes
     
     steps:
       - name: Create Timestamp
