@@ -84,7 +84,7 @@ jobs:
             pwd
             ls mkimg-k230
             mkdir -p mkimg-k230/${OUTPUT}
-            cp bins/* mkimg-k230/${OUTPUT}/
+            cp /home/runner/work/XMen/XMen/bins/* mkimg-k230/${OUTPUT}/
             
       - name: Build mkimg-k230
         run: |
