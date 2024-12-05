@@ -85,7 +85,7 @@ jobs:
       #     submodules: true
           
       - name: Build mkimg-k230
-        run: 
+        run: |
             mkdir -p mkimg-k230/${OUTPUT}
             cp bins/* mkimg-k230/${OUTPUT}/
             pushd mkimg-k230
