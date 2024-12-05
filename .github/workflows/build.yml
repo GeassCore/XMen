@@ -26,11 +26,7 @@ env:
 
 jobs:
   mkrootfs:
-    strategy:
-      fail-fast: false
-    
     runs-on: ubuntu-latest
-    
     steps:
       - name: Create Timestamp
         run: |
