@@ -92,7 +92,7 @@ jobs:
                 echo "RUNNER_ID=${{ github.run_id }}" >> revyos-release
 
                 git submodule init
-                git submodule update
+                git submodule update --depth 1
 
                 # workaround for
                 sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
