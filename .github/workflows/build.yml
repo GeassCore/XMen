@@ -22,6 +22,9 @@ env:
   KDEB_COMPRESS: xz
   KDEB_CHANGELOG_DIST: unstable
   OUTPUT: output
+  ABI: rv64
+  DISTRO: revyos
+  BOARD: canmv
   continue: true
   time: 300
 
@@ -97,7 +100,40 @@ jobs:
                 # workaround for
                 sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
   
-                sudo -E --preserve-env=PATH bash ./build.sh build all
+                sudo -E --preserve-env=PATH bash ./build.sh build check_euid_root
+                sudo -E --preserve-env=PATH bash ./build.sh build build_opensbi
+                sudo -E --preserve-env=PATH bash ./build.sh build build_uboot
+                sudo -E --preserve-env=PATH bash ./build.sh build build_rootfs
+                cp ../bins/* ${OUTPUT}/
+                sudo -E --preserve-env=PATH bash ./build.sh build build_img
                 # fix permissions
                 sudo chown -R $USER:$USER output
             popd
+      
+       - name: Make Checksum file & Compress files
+        run: |
+            pushd ${OUTPUT}
+              mv sysimage-sdcard*.img k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
+              sha256sum k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img k230_${{ env.BOARD }}_${{ env.ABI }}.bin > SHA256SUMS
+              sha512sum k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img k230_${{ env.BOARD }}_${{ env.ABI }}.bin > SHA512SUMS
+              zstd k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
+            popd
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 30
+          name: k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}
+          path: |
+                  ${{ env.OUTPUT }}/k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
+                  ${{ env.OUTPUT }}/k230_${{ env.BOARD }}_${{ env.ABI }}.bin
+                  ${{ env.OUTPUT }}/SHA256SUMS
+                  ${{ env.OUTPUT }}/SHA512SUMS
+
+      - name: 'Create release by tag'
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+                  ${{ env.OUTPUT }}/*.img.zst
+          token: ${{ secrets.GITHUB_TOKEN }}
