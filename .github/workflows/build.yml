@@ -79,15 +79,16 @@ jobs:
           path: mkimg-k230
           ref: 2024.10.08
           
-      # - name: Checkout Repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     submodules: true
-          
-      - name: Build mkimg-k230
+      - name: list file
         run: |
+            pwd
+            ls
+            mkimg-k230
             mkdir -p mkimg-k230/${OUTPUT}
             cp bins/* mkimg-k230/${OUTPUT}/
+            
+      - name: Build mkimg-k230
+        run: |
             pushd mkimg-k230
                 #make revyos-release on CI
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
