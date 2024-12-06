@@ -116,7 +116,7 @@ jobs:
             # cp Xmen/bins/* mkimg-k230//${{ env.OUTPUT }}
             pushd mkimg-k230
                 #make revyos-release on CI
-                ls -lath ${{ env.OUTPUT }}
+                #ls -lath ${{ env.OUTPUT }}
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
                 echo "BUILD_DATE=${{ env.BUILD_DATE }}" >> revyos-release
                 echo "RELEASE_ID=${{ github.ref_name }}" >> revyos-release
