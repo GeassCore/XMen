@@ -109,7 +109,7 @@ jobs:
                 
 
                 sudo -E --preserve-env=PATH bash ./build.sh build opensbi
-                #sudo -E --preserve-env=PATH bash ./build.sh build uboot
+                sudo -E --preserve-env=PATH bash ./build.sh build uboot
                 sudo cp ../Xmen/bins/* ${{ env.OUTPUT }}
                 #sudo -E --preserve-env=PATH bash ./build.sh build rootfs
                 #cp ../bins/* ${OUTPUT}/
