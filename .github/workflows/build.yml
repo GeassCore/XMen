@@ -97,7 +97,7 @@ jobs:
                 echo "COMMIT_ID=${{ github.sha }}" >> revyos-release
                 echo "RUNNER_ID=${{ github.run_id }}" >> revyos-release
 
-                sed '1,3d' .gitmodules > .gitmodules
+                # sed '1,3d' .gitmodules > .gitmodules
                 git submodule init
                 git submodule update --depth 1
 
