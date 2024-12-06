@@ -112,8 +112,8 @@ jobs:
           
       - name: Build mkimg-k230
         run: |
-            mkdir -p mkimg-k230//${{ env.OUTPUT }}
-            cp Xmen/bins/* mkimg-k230//${{ env.OUTPUT }}
+            # mkdir -p mkimg-k230//${{ env.OUTPUT }}
+            # cp Xmen/bins/* mkimg-k230//${{ env.OUTPUT }}
             pushd mkimg-k230
                 #make revyos-release on CI
                 ls -lath ${{ env.OUTPUT }}
@@ -132,10 +132,10 @@ jobs:
                 # do not build linux
                 #sed '197d' ./build.sh > ./build.sh
                 
-
+                sudo -E --preserve-env=PATH bash ./build.sh build linux
                 sudo -E --preserve-env=PATH bash ./build.sh build opensbi
                 sudo -E --preserve-env=PATH bash ./build.sh build uboot
-                sudo cp ../Xmen/bins/* ${{ env.OUTPUT }}
+                #sudo cp ../Xmen/bins/* ${{ env.OUTPUT }}
                 sudo -E --preserve-env=PATH bash ./build.sh build rootfs
                 #cp ../bins/* ${OUTPUT}/
                 #sudo rm -rf ./tmp
