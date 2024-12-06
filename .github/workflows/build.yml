@@ -91,6 +91,7 @@ jobs:
             cp Xmen/bins/* mkimg-k230//${{ env.OUTPUT }}
             pushd mkimg-k230
                 #make revyos-release on CI
+                ls -lath ${{ env.OUTPUT }}
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
                 echo "BUILD_DATE=${{ env.BUILD_DATE }}" >> revyos-release
                 echo "RELEASE_ID=${{ github.ref_name }}" >> revyos-release
@@ -104,7 +105,7 @@ jobs:
                 # workaround for
                 sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
                 # do not build linux
-                sed '197d' ./build.sh > ./build.sh
+                # sed '197d' ./build.sh > ./build.sh
                 
 
                 sudo -E --preserve-env=PATH bash ./build.sh build all
@@ -113,9 +114,11 @@ jobs:
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_uboot
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_rootfs
                 #cp ../bins/* ${OUTPUT}/
-                #sudo -E --preserve-env=PATH bash ./build.sh build build_img
+                cp ../Xmen/bins/* ${{ env.OUTPUT }}
+                sudo -E --preserve-env=PATH bash ./build.sh build build_img
                 # fix permissions
                 sudo chown -R $USER:$USER output
+                ls -lath output/
             popd
             
       - name: Make Checksum file & Compress files
