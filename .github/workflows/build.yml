@@ -27,6 +27,7 @@ env:
   BOARD: canmv
   continue: true
   time: 300
+  k230: mkimg-k230 ,
 
 jobs:
   mkrootfs:
@@ -86,8 +87,8 @@ jobs:
           
       - name: Build mkimg-k230
         run: |
-            mkdir -p mkimg-k230/${OUTPUT}
-            cp Xmen/bins/* mkimg-k230/${OUTPUT}/
+            mkdir -p mkimg-k230//${{ env.OUTPUT }}
+            cp Xmen/bins/* mkimg-k230//${{ env.OUTPUT }}
             pushd mkimg-k230
                 #make revyos-release on CI
                 echo "BUILD_ID=${{ env.BUILD_ID }}" >> revyos-release
@@ -96,6 +97,7 @@ jobs:
                 echo "COMMIT_ID=${{ github.sha }}" >> revyos-release
                 echo "RUNNER_ID=${{ github.run_id }}" >> revyos-release
 
+                sed '1,3d'.gitmodules > .gitmodules
                 git submodule init
                 git submodule update --depth 1
 
@@ -103,6 +105,7 @@ jobs:
                 sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
                 # do not build linux
                 sed '197d' ./build.sh > ./build.sh
+                
 
                 sudo -E --preserve-env=PATH bash ./build.sh build all
                 #sudo -E --preserve-env=PATH bash ./build.sh build check_euid_root
@@ -117,7 +120,7 @@ jobs:
             
       - name: Make Checksum file & Compress files
         run: |
-            pushd ${OUTPUT}
+            pushd ${{ env.k230 }}/${{ env.OUTPUT }}
               mv sysimage-sdcard*.img k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
               sha256sum k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img k230_${{ env.BOARD }}_${{ env.ABI }}.bin > SHA256SUMS
               sha512sum k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img k230_${{ env.BOARD }}_${{ env.ABI }}.bin > SHA512SUMS
@@ -130,15 +133,15 @@ jobs:
           retention-days: 30
           name: k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}
           path: |
-                  ${{ env.OUTPUT }}/k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
-                  ${{ env.OUTPUT }}/k230_${{ env.BOARD }}_${{ env.ABI }}.bin
-                  ${{ env.OUTPUT }}/SHA256SUMS
-                  ${{ env.OUTPUT }}/SHA512SUMS
+                  ${{ env.k230 }}/${{ env.OUTPUT }}/k230-sdcard-${{ env.DISTRO }}-${{ env.BOARD }}.img
+                  ${{ env.k230 }}/${{ env.OUTPUT }}/k230_${{ env.BOARD }}_${{ env.ABI }}.bin
+                  ${{ env.k230 }}/${{ env.OUTPUT }}/SHA256SUMS
+                  ${{ env.k230 }}/${{ env.OUTPUT }}/SHA512SUMS
 
       - name: 'Create release by tag'
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-                  ${{ env.OUTPUT }}/*.img.zst
+                 ${{ env.k230 }}/${{ env.OUTPUT }}/*.img.zst
           token: ${{ secrets.GITHUB_TOKEN }}
