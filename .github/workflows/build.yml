@@ -72,6 +72,31 @@ jobs:
               make -j$(nproc)
               sudo make install
             popd
+
+      - name: Checkout qemu
+        uses: actions/checkout@v4
+        with:
+          repository: revyos/qemu
+          path: qemu
+          ref: ab8f84892a89feea60f1bb24432ff58ce6d2885c  # TODO: remove this line
+
+      - name: build qemu
+        run: |
+            pushd qemu
+              ./configure \
+                --prefix=$HOME/qemu-install \
+                --static \
+                --target-list=riscv64-linux-user \
+                --disable-system \
+                --disable-pie \
+                --interp-prefix=/etc/qemu-binfmt/%M
+              make -j$(nproc)
+              make install
+
+              sudo cp -fv $HOME/qemu-install/bin/qemu-riscv64 /usr/bin/qemu-riscv64-static
+            popd
+            ls -al /usr/bin/qemu-riscv64-static
+            sudo dpkg-reconfigure binfmt-support
             
       - name: Checkout mkimg-k230
         uses: actions/checkout@v4
@@ -111,9 +136,10 @@ jobs:
                 sudo -E --preserve-env=PATH bash ./build.sh build opensbi
                 sudo -E --preserve-env=PATH bash ./build.sh build uboot
                 sudo cp ../Xmen/bins/* ${{ env.OUTPUT }}
-                #sudo -E --preserve-env=PATH bash ./build.sh build rootfs
+                sudo -E --preserve-env=PATH bash ./build.sh build rootfs
                 #cp ../bins/* ${OUTPUT}/
                 #sudo rm -rf ./tmp
+                ls -lath output/
                 sudo -E --preserve-env=PATH bash ./build.sh build img
                 # fix permissions
                 sudo chown -R $USER:$USER output
