@@ -105,7 +105,7 @@ jobs:
                 # workaround for
                 sed -i "s#deb http#deb [trusted=yes] http#g" ./build.sh
                 # do not build linux
-                # sed '197d' ./build.sh > ./build.sh
+                sed '197d' ./build.sh > ./build.sh
                 
 
                 sudo -E --preserve-env=PATH bash ./build.sh build all
@@ -114,8 +114,9 @@ jobs:
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_uboot
                 #sudo -E --preserve-env=PATH bash ./build.sh build build_rootfs
                 #cp ../bins/* ${OUTPUT}/
-                cp ../Xmen/bins/* ${{ env.OUTPUT }}
-                sudo -E --preserve-env=PATH bash ./build.sh build build_img
+                sudo cp ../Xmen/bins/* ${{ env.OUTPUT }}
+                sudo rm -rf ./tmp
+                sudo -E --preserve-env=PATH bash ./build.sh build img
                 # fix permissions
                 sudo chown -R $USER:$USER output
                 ls -lath output/
