@@ -27,7 +27,7 @@ env:
   BOARD: canmv
   continue: true
   time: 300
-  k230: mkimg-k230 ,
+  k230: mkimg-k230
 
 jobs:
   mkrootfs:
