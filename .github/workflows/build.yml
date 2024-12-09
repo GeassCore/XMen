@@ -67,7 +67,7 @@ jobs:
           pushd Xmen/
             git checkout remotes/origin/rv64ilp32-dev
             cd Examples/riscv_helloworld
-            make CROSS_COMPILE=${{ CROSS_COMPILE }}
+            make CROSS_COMPILE=${{ env.CROSS_COMPILE }}
             ls -lath
           popd
 
