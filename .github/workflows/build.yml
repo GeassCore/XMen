@@ -112,7 +112,9 @@ jobs:
 
       - name: Build Xmen
         run: |
-          pushd XMen/Examples/riscv_helloworld
+          pushd XMen/
+            git checkout remotes/origin/rv64ilp32-dev
+            cd Examples/riscv_helloworld
             make CROSS_COMPILE:=$(CROSS_COMPILE)
             ls -lath
           popd
