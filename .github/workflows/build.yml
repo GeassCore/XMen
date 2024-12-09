@@ -57,7 +57,7 @@ jobs:
               echo "PATH=${PATH}" >> $GITHUB_ENV
               $(CROSS_COMPILE)gcc -v                    
       
-       - name: Checkout Repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           path: Xmen
