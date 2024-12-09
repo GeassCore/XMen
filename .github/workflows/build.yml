@@ -109,6 +109,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: Xmen
+
+      - name: Build Xmen
+        run: |
+          pushd XMen/Examples/riscv_helloworld
+            make CROSS_COMPILE:=$(CROSS_COMPILE)
+            ls -lath
+          popd
           
       - name: Build mkimg-k230
         run: |
@@ -139,6 +146,8 @@ jobs:
                 sudo -E --preserve-env=PATH bash ./build.sh build rootfs
                 #cp ../bins/* ${OUTPUT}/
                 #sudo rm -rf ./tmp
+                ls -lath output/
+                sudo cp ../XMen/Examples/riscv_helloworld/riscv_helloworld.bin ${OUTPUT}/Image_rv64
                 ls -lath output/
                 sudo -E --preserve-env=PATH bash ./build.sh build img
                 # fix permissions
