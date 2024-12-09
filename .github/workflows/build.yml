@@ -10,10 +10,12 @@ on:
   workflow_dispatch:
 
 env:
+  ruyi_toolchain: https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/releases/download/2024.07.25/
+  ruyi_filename: riscv64ilp32-elf-ubuntu-22.04-gcc-nightly-2024.07.25-nightly.tar.gz
   xuantie_toolchain: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1721095219235//
-  toolchain_file_name: Xuantie-900-gcc-linux-6.6.0-glibc-x86_64-V2.10.1-20240712.tar.gz
+  xuantie_filename: Xuantie-900-gcc-linux-6.6.0-glibc-x86_64-V2.10.1-20240712.tar.gz
   mainline_toolchain: https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.10.18
-  mainline_toolchain_file_name: riscv64-glibc-ubuntu-22.04-gcc-nightly-2023.10.18-nightly.tar.gz
+  mainline_filename: riscv64-glibc-ubuntu-22.04-gcc-nightly-2023.10.18-nightly.tar.gz
   wget_alias: 'wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 0'
   ARCH: riscv
   CROSS_COMPILE: riscv64-unknown-linux-gnu-
@@ -50,13 +52,21 @@ jobs:
               ${wget_alias} https://mirror.iscas.ac.cn/revyos/revyos-addons/pool/main/r/revyos-keyring/revyos-keyring_2023.06.12_all.deb
               sudo apt install ./revyos-keyring_2023.06.12_all.deb
               
-              ${wget_alias} ${mainline_toolchain}/${mainline_toolchain_file_name}
-              tar -xvf ${mainline_toolchain_file_name} -C /opt
-              rm -rf ${mainline_toolchain_file_name}
+              ${wget_alias} ${mainline_toolchain}/${mainline_filename}
+              tar -xvf ${mainline_filename} -C /opt
+              rm -rf ${mainline_filename}
               export PATH="/opt/riscv/bin:$PATH"
+              echo "PATH=${PATH}" >> $GITHUB_ENV
+
+              ${wget_alias} ${ruyi_toolchain}/${ruyi_filename}
+              tar -xvf ${ruyi_filename} -C /opt/riscv
+              rm -rf ${ruyi_filename}
+              export PATH="/opt/riscv/riscv/bin:$PATH"
               echo "PATH=${PATH}" >> $GITHUB_ENV
               $(CROSS_COMPILE)gcc -v                    
       
+              echo ${PATH}
+
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
@@ -67,7 +77,7 @@ jobs:
           pushd Xmen/
             git checkout remotes/origin/rv64ilp32-dev
             cd Examples/riscv_helloworld
-            make CROSS_COMPILE=${{ env.CROSS_COMPILE }}
+            make CROSS_COMPILE=riscv64-unknown-elf-
             ls -lath
           popd
 
