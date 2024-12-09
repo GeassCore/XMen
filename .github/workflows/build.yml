@@ -57,6 +57,20 @@ jobs:
               echo "PATH=${PATH}" >> $GITHUB_ENV
               $(CROSS_COMPILE)gcc -v                    
       
+       - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          path: Xmen
+
+      - name: Build Xmen
+        run: |
+          pushd Xmen/
+            git checkout remotes/origin/rv64ilp32-dev
+            cd Examples/riscv_helloworld
+            make CROSS_COMPILE:=$(CROSS_COMPILE)
+            ls -lath
+          popd
+
       - name: Checkout genimage
         uses: actions/checkout@v4
         with:
@@ -104,20 +118,6 @@ jobs:
           repository: revyos/mkimg-k230
           path: mkimg-k230
           ref: 2024.10.08
-          
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-        with:
-          path: Xmen
-
-      - name: Build Xmen
-        run: |
-          pushd XMen/
-            git checkout remotes/origin/rv64ilp32-dev
-            cd Examples/riscv_helloworld
-            make CROSS_COMPILE:=$(CROSS_COMPILE)
-            ls -lath
-          popd
           
       - name: Build mkimg-k230
         run: |
