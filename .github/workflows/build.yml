@@ -70,11 +70,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          path: Xmen
+          path: XMen
 
-      - name: Build Xmen
+      - name: Build XMen
         run: |
-          pushd Xmen/
+          pushd XMen/
             git checkout remotes/origin/rv64ilp32-dev
             cd Examples/riscv_helloworld
             make CROSS_COMPILE=riscv64-unknown-elf-
@@ -132,7 +132,7 @@ jobs:
       - name: Build mkimg-k230
         run: |
             # mkdir -p mkimg-k230//${{ env.OUTPUT }}
-            # cp Xmen/bins/* mkimg-k230//${{ env.OUTPUT }}
+            # cp XMen/bins/* mkimg-k230//${{ env.OUTPUT }}
             pushd mkimg-k230
                 #make revyos-release on CI
                 #ls -lath ${{ env.OUTPUT }}
@@ -152,14 +152,16 @@ jobs:
                 #sed '197d' ./build.sh > ./build.sh
                 
                 sudo -E --preserve-env=PATH bash ./build.sh build linux
+                mkdir -p output/
+                ls -lath output/
+                sudo cp ../XMen/Examples/riscv_helloworld/riscv_helloworld.bin ${OUTPUT}/Image_rv64
+                ls -lath output/
                 sudo -E --preserve-env=PATH bash ./build.sh build opensbi
                 sudo -E --preserve-env=PATH bash ./build.sh build uboot
-                #sudo cp ../Xmen/bins/* ${{ env.OUTPUT }}
+                #sudo cp ../XMen/bins/* ${{ env.OUTPUT }}
                 sudo -E --preserve-env=PATH bash ./build.sh build rootfs
                 #cp ../bins/* ${OUTPUT}/
                 #sudo rm -rf ./tmp
-                ls -lath output/
-                sudo cp ../XMen/Examples/riscv_helloworld/riscv_helloworld.bin ${OUTPUT}/Image_rv64
                 ls -lath output/
                 sudo -E --preserve-env=PATH bash ./build.sh build img
                 # fix permissions
