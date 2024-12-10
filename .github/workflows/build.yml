@@ -9,6 +9,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   ruyi_toolchain: https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/releases/download/2024.07.25/
   ruyi_filename: riscv64ilp32-elf-ubuntu-22.04-gcc-nightly-2024.07.25-nightly.tar.gz
