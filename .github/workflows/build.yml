@@ -75,7 +75,8 @@ jobs:
       - name: Build XMen
         run: |
           pushd XMen/
-            git checkout remotes/origin/rv64ilp32-dev
+            #git checkout remotes/origin/rv64ilp32-dev
+            git branch -a
             cd Examples/riscv_helloworld
             make CROSS_COMPILE=riscv64-unknown-elf-
             ls -lath
