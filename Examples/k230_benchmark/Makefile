@@ -1,38 +1,58 @@
-CC	= $(CROSS_COMPILE)gcc
-CPP	= $(CROSS_COMPILE)cpp
-AR 	= $(CROSS_COMPILE)ar
-LD 	= $(CROSS_COMPILE)ld
-OBJCOPY	= $(CROSS_COMPILE)objcopy
-OBJDUMP	= $(CROSS_COMPILE)objdump
+# Toolchain definitions
+CC      = $(CROSS_COMPILE)gcc
+CPP     = $(CROSS_COMPILE)cpp
+AR      = $(CROSS_COMPILE)ar
+LD      = $(CROSS_COMPILE)ld
+OBJCOPY = $(CROSS_COMPILE)objcopy
+OBJDUMP = $(CROSS_COMPILE)objdump
 
-CFLAGS	= -fPIC -fno-stack-protector
-TARGET	= riscv_helloworld
+# Project configuration
+TARGET  = riscv_helloworld
+CFLAGS  = -fPIC -fno-stack-protector -mcmodel=medlow -g
 
-CC_INCLUDE := -I$(CURDIR)/Paltform/Include -I$(CURDIR)/../../RTOS/Kernel/
-CC_INCLUDE += -I$(CURDIR)/../../RTOS/Portable/Processor/riscv/
-CC_INCLUDE += -I$(CURDIR)/Config/OS_Config/
-CC_INCLUDE += -I$(CURDIR)/Paltform/Include/
+# Directory definitions
+RTOS_ROOT    = $(CURDIR)/../../RTOS
+PLATFORM_DIR = $(CURDIR)/Paltform
+CONFIG_DIR   = $(CURDIR)/Config
+ASW_DIR      = $(CURDIR)/ASW
 
-CC_COMPILE := $(CURDIR)/Config/OS_Config/%.c
-CC_COMPILE += $(CURDIR)/ASW/src/%.c
-CC_COMPILE += $(CURDIR)/../../RTOS/Kernel/%.c
-CC_COMPILE += $(CURDIR)/../../RTOS/Portable/Processor/riscv/%.c
+# Include paths
+CC_INCLUDE  = -I$(PLATFORM_DIR)/Include
+CC_INCLUDE += -I$(RTOS_ROOT)/Kernel
+CC_INCLUDE += -I$(RTOS_ROOT)/Portable/Processor/riscv
+CC_INCLUDE += -I$(CONFIG_DIR)/OS_Config
 
-${TARGET}.elf: start.o RV_PortASM.o *.o
-	$(LD) $(CROSS_LDFLAGS) -melf32lriscv -T$(CURDIR)/Startup/link.ld *.o -o $@
+# Source files
+SRCS  = $(wildcard $(CONFIG_DIR)/OS_Config/*.c)
+SRCS += $(wildcard $(ASW_DIR)/src/*.c)
+SRCS += $(wildcard $(RTOS_ROOT)/Kernel/*.c)
+SRCS += $(wildcard $(RTOS_ROOT)/Portable/Processor/riscv/*.c)
+
+# Object files
+OBJS = $(SRCS:.c=.o)
+
+# Assembly flags
+ASM_FLAG = $(CC_INCLUDE) -D__ASSEMBLY__
+
+# Build rules
+all: ${TARGET}.elf
+
+${TARGET}.elf: start.o RV_PortASM.o $(OBJS)
+	$(LD) $(CROSS_LDFLAGS) -melf32lriscv -T$(CURDIR)/Startup/link.ld $^ -o $@
 	$(OBJCOPY) -O binary $@ ${TARGET}.bin
 	$(OBJDUMP) -D $@ > ${TARGET}.asm
 
-%.o: $(CC_COMPILE)
-	$(CC) -mcmodel=medlow ${CFLAGS} -g -c $^ $(CC_INCLUDE)
-
-ASM_FLAG := $(CC_INCLUDE) -D__ASSEMBLY__
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< $(CC_INCLUDE) -o $@
 
 start.o: $(CURDIR)/Startup/start.S
-	$(CC) ${CFLAGS} -g -c $^ $(ASM_FLAG)
+	$(CC) $(CFLAGS) -c $< $(ASM_FLAG)
 
-RV_PortASM.o: $(CURDIR)/../../RTOS/Portable/Processor/riscv/RV_PortASM.S
-	$(CC) ${CFLAGS} -g -c $^ $(ASM_FLAG)
+RV_PortASM.o: $(RTOS_ROOT)/Portable/Processor/riscv/RV_PortASM.S
+	$(CC) $(CFLAGS) -c $< $(ASM_FLAG)
 
 clean:
-	-rm -rf *.o *.bin *.elf *.asm
+	rm -f $(OBJS) *.o *.bin *.elf *.asm
+
+.PHONY: all clean
+
