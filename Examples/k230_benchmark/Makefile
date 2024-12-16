@@ -21,6 +21,7 @@ CC_INCLUDE  = -I$(PLATFORM_DIR)/Include
 CC_INCLUDE += -I$(RTOS_ROOT)/Kernel
 CC_INCLUDE += -I$(RTOS_ROOT)/Portable/Processor/riscv
 CC_INCLUDE += -I$(CONFIG_DIR)/OS_Config
+CC_INCLUDE += -I$(ASW_DIR)/include
 
 # Source files
 SRCS  = $(wildcard $(CONFIG_DIR)/OS_Config/*.c)
